@@ -47,22 +47,41 @@ const logger = winston.createLogger({
 });
 
 app.use(
-    morgan(":methode : url : status : response-time ms - : res[content-length]")
-)
+  morgan(":methode : url : status : response-time ms - : res[content-length]"),
+);
 // api logger middlware
-const apilogger = (req,res,next) => {
-    const start = Date.now();
-    res.on('finish', () => {
-        const duration = Date.now() - start;
-        logger.info({
-            methode : req.methode,
-            path: req.path,
-            status : res.statusCode,
-            duration: `${duration}ms`,
-            parms: req.parms,
-            query: req.query,
-            body: req.methode !== 'GET' ? req.body : undefined
-        });
+const apilogger = (req, res, next) => {
+  const start = Date.now();
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    logger.info({
+      methode: req.methode,
+      path: req.path,
+      status: res.statusCode,
+      duration: `${duration}ms`,
+      parms: req.parms,
+      query: req.query,
+      body: req.methode !== "GET" ? req.body : undefined,
     });
-    next();
-}
+  });
+  next();
+};
+
+app.use(apilogger);
+
+// error handling middleware
+
+app.use((err, req, res, next) => {
+  logger.error({
+    message:err.message,
+    stack: err.stack,
+    methode: req.methode,
+    path: req.path,
+    parms: req.parms,
+    query: req.query,
+    body: req.methode !== "GET" ? req.body : undefined,
+  });
+  res.status(500).json({message: 'internal server error  '})
+});
+
+const studentSchema = new mongoose.Schema()
