@@ -73,7 +73,7 @@ app.use(apilogger);
 
 app.use((err, req, res, next) => {
   logger.error({
-    message:err.message,
+    message: err.message,
     stack: err.stack,
     methode: req.methode,
     path: req.path,
@@ -81,7 +81,61 @@ app.use((err, req, res, next) => {
     query: req.query,
     body: req.methode !== "GET" ? req.body : undefined,
   });
-  res.status(500).json({message: 'internal server error  '})
+  res.status(500).json({ message: "internal server error  " });
 });
 
-const studentSchema = new mongoose.Schema()
+const studentSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    require: true,
+  },
+  email: {
+    type: String,
+    require: true,
+    unique: true,
+  },
+  course: {
+    type: String,
+    require: true,
+  },
+  startDate: {
+    type: Date,
+    require: true,
+  },
+  status: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "active",
+  },
+},
+{
+  timestamps: true,
+});
+
+const Student = mongoose.model("student", studentSchema);
+
+const courseSchema = new mongoose.Schema(
+  {
+    name:{
+      type:String,
+      required: true,
+      unique:true
+    },
+    description:{
+      type:String,
+      require: true
+    },
+    duration:{
+      type: Number,
+      required: true
+    },
+    status:{
+      type: String, 
+      enum:["active", "inactive"],
+      default: "active"
+    }
+},{
+  timestamps: true,
+}
+)
+const cource = mongoose.model("cource",courseSchema )
