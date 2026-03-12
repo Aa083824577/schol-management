@@ -13,7 +13,7 @@ app.use(express.static("public"));
 
 mongoose
   .connect(
-    process.env.MONGODB_URI || "mongodb://localhose:27017/schol-gestion",
+    process.env.MONGODB_URI || "mongodb://localhost:27017/schol-gestion",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -47,21 +47,23 @@ const logger = winston.createLogger({
 });
 
 app.use(
-  morgan(":methode : url : status : response-time ms - : res[content-length]"),
+  morgan(":method :url :status :response-time ms - :res[content-length]"),
 );
+
 // api logger middlware
+
 const apilogger = (req, res, next) => {
   const start = Date.now();
   res.on("finish", () => {
     const duration = Date.now() - start;
     logger.info({
-      methode: req.methode,
+      method: req.method,
       path: req.path,
       status: res.statusCode,
       duration: `${duration}ms`,
-      parms: req.parms,
+      params: req.params,
       query: req.query,
-      body: req.methode !== "GET" ? req.body : undefined,
+      body: req.method !== "GET" ? req.body : undefined,
     });
   });
   next();
@@ -75,67 +77,86 @@ app.use((err, req, res, next) => {
   logger.error({
     message: err.message,
     stack: err.stack,
-    methode: req.methode,
+    method: req.method,
     path: req.path,
-    parms: req.parms,
+    params: req.params,
     query: req.query,
-    body: req.methode !== "GET" ? req.body : undefined,
+    body: req.method !== "GET" ? req.body : undefined,
   });
   res.status(500).json({ message: "internal server error  " });
 });
 
-const studentSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    require: true,
+const studentSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    course: {
+      type: String,
+      required: true,
+    },
+    startDate: {
+      type: Date,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+    },
   },
-  email: {
-    type: String,
-    require: true,
-    unique: true,
+  {
+    timestamps: true,
   },
-  course: {
-    type: String,
-    require: true,
-  },
-  startDate: {
-    type: Date,
-    require: true,
-  },
-  status: {
-    type: String,
-    enum: ["active", "inactive"],
-    default: "active",
-  },
-},
-{
-  timestamps: true,
-});
+);
 
 const Student = mongoose.model("student", studentSchema);
 
 const courseSchema = new mongoose.Schema(
   {
-    name:{
-      type:String,
+    name: {
+      type: String,
       required: true,
-      unique:true
+      unique: true,
     },
-    description:{
-      type:String,
-      require: true
+    description: {
+      type: String,
+      required: true,
     },
-    duration:{
+    duration: {
       type: Number,
-      required: true
+      required: true,
     },
-    status:{
-      type: String, 
-      enum:["active", "inactive"],
-      default: "active"
-    }
-},{
-  timestamps: true,
-}
-)
-const cource = mongoose.model("cource",courseSchema )
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
+const Course = mongoose.model("Course", courseSchema);
+
+// cource api routers
+
+app.get("/api/courses", async (req, res) => {
+  try {
+    const courses = await Course.find().sort({ name: 1 });
+    logger.info(`recived ${courses.length} cources successfully`);
+    res.json(courses);
+  } catch (error) {
+    logger.error({
+      message: "Error fetching courses",
+      error: error.message,
+    });
+    res.status(500).json({ message: error.message });
+  }
+});
