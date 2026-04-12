@@ -5,22 +5,294 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link 
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    rel="stylesheet"
-    >
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
         <!-- sidebar-->
-        <dir class="sidbare">
+        <div class="sidbare">
             <div class="logo">
                 <i class="fas fa-graduation-cap"></i>
+                StudManager
             </div>
-        </dir>
+            <div class="nav-item active" data-section="dashboard">
+                <i class="fas fa-chart-pie"></i>
+                Dashboard
+            </div>
+            <div class="nav-item" data-section="students">
+                <i class="fas fa-users"></i>
+                Students
+            </div>
+            <div class="nav-item" data-section="courses">
+                <i class="fas fa-book"></i>
+                Courses
+            </div>
+            <div class="nav-item" data-section="reports">
+                <i class="fas fa-chart-bar"></i>
+                Reports
+            </div>
+            <div class="nav-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                Settings
+            </div>
+        </div>
+
+        <!-- the main section  -->
+        <div class="main-content">
+            <!-- header -->
+            <div class="header">
+                <!-- search bar -->
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="search syudent....">
+                </div>
+                <!-- profile -->
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span>Admin</span>
+                </div>
+            </div>
+
+            <!-- dashboard Section -->
+            <div id="dashboardSection" class="section dashboard active">
+                <!-- the big cards  -->
+                <div class="dashboard-cards">
+                    <!-- card of the number of the student  -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                        <div class="cad-title">Total Students</div>
+                        <div class="card-value">0</div>
+                    </div>
+                    <!-- card of the active courses -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        </div>
+                        <div class="card-title">Active Courses</div>
+                        <div class="card-value">0</div>
+                    </div>
+                    <!-- card of the graduated student -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                        </div>
+                        <div class="card-title">Graduates</div>
+                        <div class="card-value">0</div>
+                    </div>
+                    <!-- card of success Rate -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <div class="card-title">Success Rate</div>
+                        <div class="card-value">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!---Student List in Dashboard-->
+            <div class="student-list">
+                <!-- table header  -->
+                <div class="table-header">
+                    <h2>Recent Students</h2>
+                    <!-- button to add student via model opning  -->
+                    <button class="add-student-btn" onclick="openModal()">
+                        <i class="fas fa-plus"></i>
+                        Add Student
+                    </button>
+                </div>
+                <!-- table of info  -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>Enrollement Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <!--  well get the data from the api and the th well b by the dom manupilation in js file -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Courses Section -->
+        <div id="coursesSection" class="section">
+            <div class="course-list">
+                <div class="table-header">
+                    <h2>Course Management</h2>
+                    <button class="add-student-btn" onclick="openCourseModal()">
+                        <i class="fas fa-plus"></i>
+                        Add Course
+                    </button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Duration (months)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="courseTableBody">
+                        <!-- well get the data from the api and the th well b by the dom manupilation in js file-->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Courses Section -->
+        <div id="coursesSection" class="section">
+            <div class="course-list">
+                <div class="table-header">
+                    <h2>Course Management</h2>
+                    <button class="add-student-btn" onclick="openCourseModal()">
+                        <i class="fas fa-plus"></i>
+                        Add Course
+                    </button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Duration (months)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="courseTableBody">
+                        <!-- well get the data from the api and the th well b by the dom manupilation in js file-->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Reports Section -->
+        <div id="reportsSection" class="section">
+            <h2>Reports Coming Soon</h2>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="settingsSection" class="section">
+            <h2>Settings Coming Soon</h2>
+        </div>
     </div>
+    <!-- Student Modal -->
+    <div class="modal" id="studentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Student</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="studentForm">
+                <div class="form-group">
+                    <label for="studentName">Full Name</label>
+                    <input type="text" id="studentName" required />
+                </div>
+                <div class="form-group">
+                    <label for="studentEmail">Email</label>
+                    <input type="email" id="studentEmail" required />
+                </div>
+                <div class="form-group">
+                    <label for="studentCourse">Course</label>
+                    <select id="studentCourse" required>
+                        <option value="">Select Course</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="enrollmentDate">Enrollment Date</label>
+                    <input type="date" id="enrollmentDate" required />
+                </div>
+                <button type="submit" class="submit-btn">Save Student</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteConfirmationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirm Deletion</h2>
+                <button class="close-btn" onclick="closeDeleteModal()">
+                    &times;
+                </button>
+            </div>
+            <div style="margin: 20px 0">
+                <p>
+                    Are you sure you want to delete this item? This action cannot be
+                    undone.
+                </p>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end">
+                <button class="action-btn" onclick="closeDeleteModal()" style="padding: 8px 16px">
+                    Cancel
+                </button>
+                <button class="action-btn delete-btn" onclick="confirmDelete()" style="padding: 8px 16px">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Modal -->
+    <div class="modal" id="courseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="courseModalTitle">Add New Course</h2>
+                <button class="close-btn" onclick="closeCourseModal()">
+                    &times;
+                </button>
+            </div>
+            <form id="courseForm">
+                <div class="form-group">
+                    <label for="courseName">Course Name</label>
+                    <input type="text" id="courseName" required />
+                </div>
+                <div class="form-group">
+                    <label for="courseDescription">Description</label>
+                    <textarea id="courseDescription" required rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="courseDuration">Duration (months)</label>
+                    <input type="number" id="courseDuration" required min="1" />
+                </div>
+                <div class="form-group">
+                    <label for="courseStatus">Status</label>
+                    <select id="courseStatus" required>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Save Course</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner">
+        <div class="spinner"></div>
+    </div>
+
 </body>
 
 </html>
