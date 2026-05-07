@@ -22,7 +22,7 @@ const studentSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    course: { type: String, required: true },
+    course: { type: mongoose.Schema.Types.ObjectId, ref: "Course", required: true },
     startDate: { type: Date, required: true },
     status: {
       type: String,
@@ -130,7 +130,7 @@ app.get("/api/courses/:id", async (req, res) => {
 
 app.get("/api/students", async (req, res) => {
   try {
-    const students = await Student.find().sort({ createdAt: -1 });
+    const students = await Student.find().populate("course", "name").sort({ createdAt: -1 });
     res.json(students);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -141,7 +141,8 @@ app.post("/api/students", async (req, res) => {
   try {
     const student = new Student(req.body);
     const savedStudent = await student.save();
-    res.status(201).json(savedStudent);
+    const populatedStudent = await Student.findById(savedStudent._id).populate("course", "name");
+    res.status(201).json(populatedStudent);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -151,7 +152,7 @@ app.put("/api/students/:id", async (req, res) => {
   try {
     const student = await Student.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
-    });
+    }).populate("course", "name");
 
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
@@ -179,15 +180,19 @@ app.delete("/api/students/:id", async (req, res) => {
 
 app.get("/api/students/search", async (req, res) => {
   try {
-    const searchTerm = req.query.q;
+    const searchTerm = (req.query.q || "").trim();
+
+    const matchedCourses = await Course.find({
+      name: { $regex: searchTerm, $options: "i" },
+    }).select("_id");
 
     const students = await Student.find({
       $or: [
         { name: { $regex: searchTerm, $options: "i" } },
-        { course: { $regex: searchTerm, $options: "i" } },
         { email: { $regex: searchTerm, $options: "i" } },
+        { course: { $in: matchedCourses.map((course) => course._id) } },
       ],
-    });
+    }).populate("course", "name");
 
     res.json(students);
   } catch (error) {
